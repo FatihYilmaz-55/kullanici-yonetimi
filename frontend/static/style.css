@@ -115,6 +115,16 @@ td.action-cell {
   transition: opacity 0.5s ease;
   z-index: 9999;
 }
+#toast.error{
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 6px solid #dc3545;
+}
+#toast.success{
+  background-color: #d4edda;
+  color: #155724;
+  border-left: 6px solid #28a745;
+}
 #toast.show{
   opacity: 1;
   pointer-events: auto;

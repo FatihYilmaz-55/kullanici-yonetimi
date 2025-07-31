@@ -6,18 +6,37 @@ const newUserTitle = document.querySelector('.newUser');
 
 let users = [];
 
-function showError(message) {
+function showToast(message, type='error') {
   const toast = document.getElementById('toast');
   if (!toast) {
     console.error('Toast div bulunamadı!');
     return;
   }
   toast.textContent = message;
+
+  toast.classList.remove('success', 'show', 'error');
+
+  toast.classList.add(type)
   toast.classList.add('show');
 
+  if(type === 'success'){
+    toast.classList.add('success');
+  }else{
+    toast.classList.add('error');
+  }
+  toast.classList.add('show');
+  
   setTimeout(() => {
     toast.classList.remove('show');
   }, 3000);
+}
+
+function showSuccess(message){
+    showToast(message, 'success');
+}
+
+function showError(message){
+    showToast(message, 'error');
 }
 
 async function fetchUsers() {
@@ -104,7 +123,7 @@ userTableBody.querySelectorAll(".deleteBtn").forEach(button => {
         const result = await response.json();
 
         if(response.ok){
-        showError(result.message);
+        showSuccess(result.message);
         await fetchUsers();
         } else {
         showError("HATA: " + (result.error || "Bilinmeyen hata"));
@@ -188,7 +207,7 @@ try {
 
     const result = await response.json();
     if (response.ok) {
-    showError(userId ? "Kullanıcı başarıyla güncellendi!" : "Kullanıcı başarıyla eklendi!");
+    showSuccess(userId ? "Kullanıcı başarıyla güncellendi!" : "Kullanıcı başarıyla eklendi!");
     closeForm();
     await fetchUsers(); 
     } else {
