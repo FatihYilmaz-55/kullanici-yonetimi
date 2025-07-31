@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kullanıcı Yönetimi</title>
+  <link rel="stylesheet" href="static/style.css" />
+</head>
+<body>
+
+  <div id="mainContainer">
+    <div id="tableContainer">
+      <h2 class="listOfUsers">Kullanıcı Listesi</h2>
+      <table border="1" id="userTable">
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Email</th>
+            <th>Oluşturulma Tarihi</th>
+            <th class="action-header"></th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+      </table>
+      <div id="showAddUserBtnContainer">
+        <button id="kullaniciGirisiGoster">Yeni Kullanıcı Oluştur</button>
+      </div>
+    </div>
+
+    <div id="kullaniciGiris">
+      <h2 class="newUser">Yeni Kullanıcı Ekle</h2>
+      <form id="addUserForm">
+        <input type="text" id="firstName" name="firstName" placeholder="First Name" required />
+        <input type="text" id="lastName" name="lastName" placeholder="Last Name" required />
+        <input type="email" id="email" name="email" placeholder="Email" required />
+        <div>
+          <button type="submit">Ekle</button>
+          <button type="button" id="cancelEdit">İptal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="static/script.js"></script>
+</body>
+</html>
