@@ -6,6 +6,20 @@ const newUserTitle = document.querySelector('.newUser');
 
 let users = [];
 
+function showError(message) {
+  const toast = document.getElementById('toast');
+  if (!toast) {
+    console.error('Toast div bulunamadı!');
+    return;
+  }
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
 async function fetchUsers() {
 try {
     const response = await fetch("http://localhost:5000/users");
@@ -13,7 +27,7 @@ try {
 
     renderTable();
 } catch (error) {
-    alert('Kullanıcıları alırken hata oluştu: ' + error.message);
+    showError('Kullanıcıları alırken hata oluştu: ' + error.message);
 }
 }
 
@@ -63,7 +77,7 @@ userTableBody.querySelectorAll(".editBtn").forEach(button => {
     const userId = e.target.getAttribute("data-id");
     const user = users.find(u => u.id == userId);
     if (!user){
-        alert("Kullanıcı bulunamadı.");
+        showError("Kullanıcı bulunamadı.");
         return;
     }
     form.firstName.value = user.firstName;
@@ -90,13 +104,13 @@ userTableBody.querySelectorAll(".deleteBtn").forEach(button => {
         const result = await response.json();
 
         if(response.ok){
-        alert(result.message);
+        showError(result.message);
         await fetchUsers();
         } else {
-        alert("HATA: " + (result.error || "Bilinmeyen hata"));
+        showError("HATA: " + (result.error || "Bilinmeyen hata"));
         }
     } catch (error){
-        alert('İstek sırasında hata oluştu: ' + error.message);
+        showError('İstek sırasında hata oluştu: ' + error.message);
     }
     });
 });
@@ -140,18 +154,18 @@ const data = { firstName, lastName, email};
 
 const nameRegex = /^[A-Za-zÇçĞğİıÖöŞşÜü]+$/;
 if (!nameRegex.test(firstName)|| !nameRegex.test(lastName)) {
-    alert("Ad ve soyad sadece harf içermelidir.")
+    showError("Ad ve soyad sadece harf içermelidir.")
     return;
 }
 
 if (firstName.length < 2 || lastName.length < 2){
-    alert("Ad ve soyad bir harften uzun olmalıdır.");
+    showError("Ad ve soyad bir harften uzun olmalıdır.");
     return;
 }
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 if (!emailRegex.test(email)) {
-    alert("Geçerli bir e-posta adresi girin. Örn: isim@site.com");
+    showError("Geçerli bir e-posta adresi girin. Örn: isim@site.com");
     return;
 }
 
@@ -174,14 +188,14 @@ try {
 
     const result = await response.json();
     if (response.ok) {
-    alert(userId ? "Kullanıcı başarıyla güncellendi!" : "Kullanıcı başarıyla eklendi!");
+    showError(userId ? "Kullanıcı başarıyla güncellendi!" : "Kullanıcı başarıyla eklendi!");
     closeForm();
     await fetchUsers(); 
     } else {
-    alert('Hata: ' + (result.error || 'Bilinmeyen hata'));
+    showError('Hata: ' + (result.error || 'Bilinmeyen hata'));
     }
 } catch (err) {
-    alert('İstek sırasında hata oluştu: ' + err.message);
+    showError('İstek sırasında hata oluştu: ' + err.message);
 }
 });
 
