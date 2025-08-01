@@ -169,10 +169,14 @@ e.preventDefault();
 const firstName = form.firstName.value.trim();
 const lastName = form.lastName.value.trim();
 const email = form.email.value.trim();
-const team = form.team.value.trim();
+const team = form.team.value;
 
-const data = { firstName, lastName, email};
+const data = { firstName, lastName, email, team};
 
+ if (!team) {
+    showError("Lütfen bir takım seçiniz.");
+    return;
+  }
 
 const nameRegex = /^[A-Za-zÇçĞğİıÖöŞşÜü]+$/;
 if (!nameRegex.test(firstName)|| !nameRegex.test(lastName)) {
