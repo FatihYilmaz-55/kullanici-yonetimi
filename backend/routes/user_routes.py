@@ -3,6 +3,7 @@ from db.mysql_connection import get_db_connection
 import traceback
 import re
 
+#uygulamandaki yönlendirme (routing) ve işlevlerin gruplanmasını sağlar.
 user_routes = Blueprint("user_routes", __name__)
 
 @user_routes.route('/users', methods=['GET'])
