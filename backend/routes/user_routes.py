@@ -72,7 +72,7 @@ def create_user():
                 db.close()
                 return jsonify({"error": "Bu email zaten kayıtlı!"}), 409 #çakışma var.
             cursor.execute("INSERT INTO users (firstName, lastName, email, team, created_at) VALUES(%s, %s, %s, %s, NOW())",
-                           (firstName, lastName, email))
+                           (firstName, lastName, email, team))
             db.commit()
         db.close()
         return jsonify({"message": "Kullanıcı eklendi."}), 201 #oluşturuldu.

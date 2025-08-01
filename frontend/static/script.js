@@ -74,6 +74,7 @@ users.forEach(user => {
     <td>${user.lastName}</td>
     <td>${user.email}</td>
     <td>${formattedDate}</td>
+    <td>${user.team}</td>
     <td class="action-cell">
         <button class="editBtn" data-id="${user.id}" title="Düzenle">✏️</button>
         <button class="deleteBtn" data-id="${user.id}" title="Sil">🗑️</button>
