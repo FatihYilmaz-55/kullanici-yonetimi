@@ -7,5 +7,4 @@ def get_db_connection():
         passwd="Ylmzxfatih12355",
         database="stajDB",
         cursorclass=pymysql.cursors.DictCursor #sözlük formatında dönmesini sağlar.
-        
     )

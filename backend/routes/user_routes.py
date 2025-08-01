@@ -6,6 +6,28 @@ import re
 #uygulamandaki yönlendirme (routing) ve işlevlerin gruplanmasını sağlar.
 user_routes = Blueprint("user_routes", __name__)
 
+@user_routes.route('/init-db', methods=['GET'])
+def create_users_table_if_not_exists():
+    try:
+        db = get_db_connection()
+        with db.cursor() as cursor:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    firstName VARCHAR(55) NOT NULL,
+                    lastName VARCHAR(55) NOT NULL,
+                    email VARCHAR(100) NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+        db.commit()
+        db.close()
+        return jsonify({"message": "Tablo oluşturuldu."})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 @user_routes.route('/users', methods=['GET'])
 def get_users():
     try:
@@ -16,7 +38,7 @@ def get_users():
         db.close()
         return jsonify(users), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 #Sunucu tarafında bir hata olduğunu belirtir.
 
 @user_routes.route('/users', methods=['POST'])
 def create_user():
@@ -27,7 +49,7 @@ def create_user():
         email = data.get('email', '').strip()
 
         if not firstName or not lastName or not email:
-            return jsonify({"error": "Eksik alan var"}), 400
+            return jsonify({"error": "Eksik alan var"}), 400 #İstemci (kullanıcı) hatalı veya eksik veri göndermiştir.
         if not firstName.isalpha() or not lastName.isalpha():
             return jsonify({"error": "Ad ve soyad sadece harf içermelidir."}), 400
         if len(firstName) < 2 or len(lastName) < 2:
@@ -42,15 +64,15 @@ def create_user():
             result = cursor.fetchone()
             if result and list(result.values())[0] > 0:
                 db.close()
-                return jsonify({"error": "Bu email zaten kayıtlı!"}), 409
+                return jsonify({"error": "Bu email zaten kayıtlı!"}), 409 #çakışma var.
             cursor.execute("INSERT INTO users (firstName, lastName, email, created_at) VALUES(%s, %s, %s, NOW())",
                            (firstName, lastName, email))
             db.commit()
         db.close()
-        return jsonify({"message": "Kullanıcı eklendi."}), 201
+        return jsonify({"message": "Kullanıcı eklendi."}), 201 #oluşturuldu.
 
     except Exception as e:
-        traceback.print_exc()
+        traceback.print_exc() #loglarda detaylı hata izi tutar.
         return jsonify({"error": str(e), "type": type(e).__name__ }), 500
 
 @user_routes.route('/users/<int:id>', methods=['PUT'])
@@ -80,7 +102,7 @@ def update_user(id):
             """, (firstName, lastName, email, id))
             db.commit()
         db.close()
-        return jsonify({"message": "Kullanıcı güncellendi."}), 200
+        return jsonify({"message": "Kullanıcı güncellendi."}), 200 #istek başarıyla tamamlandı.
 
     except Exception as e:
         traceback.print_exc()
@@ -99,23 +121,3 @@ def delete_user(id):
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
-@user_routes.route('/init-db', methods=['GET'])
-def create_users_table_if_not_exists():
-    try:
-        db = get_db_connection()
-        with db.cursor() as cursor:
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    firstName VARCHAR(55) NOT NULL,
-                    lastName VARCHAR(55) NOT NULL,
-                    email VARCHAR(100) NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-        db.commit()
-        db.close()
-        return jsonify({"message": "Tablo oluşturuldu."})
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
