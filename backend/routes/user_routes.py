@@ -130,24 +130,3 @@ def delete_user(id):
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     
-@user_routes.route('/alter-table', methods=['GET'])
-def add_team_column():
-    try:
-        db = get_db_connection()
-        with db.cursor() as cursor:
-            # Önce sütun var mı kontrol et
-            cursor.execute("SHOW COLUMNS FROM users LIKE 'team'")
-            result = cursor.fetchone()
-            if not result:
-                cursor.execute("ALTER TABLE users ADD COLUMN team VARCHAR(100)")
-                db.commit()
-                message = "team sütunu eklendi."
-            else:
-                message = "team sütunu zaten mevcut."
-        db.close()
-        return jsonify({"message": message})
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
-
-
