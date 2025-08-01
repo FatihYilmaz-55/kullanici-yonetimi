@@ -3,6 +3,8 @@ from db.mysql_connection import get_db_connection
 import traceback
 import re
 
+ALLOWED_TEAMS = ['Galatasaray', 'Fenerbahçe', 'Beşiktaş', 'SAMSUNSPOR', 'trabzonspor']
+
 #uygulamandaki yönlendirme (routing) ve işlevlerin gruplanmasını sağlar.
 user_routes = Blueprint("user_routes", __name__)
 
@@ -17,6 +19,7 @@ def create_users_table_if_not_exists():
                     firstName VARCHAR(55) NOT NULL,
                     lastName VARCHAR(55) NOT NULL,
                     email VARCHAR(100) NOT NULL,
+                    team VARCHAR(50) NOT NULL,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 )
             """)
@@ -47,8 +50,9 @@ def create_user():
         firstName = data.get('firstName', '').strip()
         lastName = data.get('lastName', '').strip()
         email = data.get('email', '').strip()
+        team = data.get('team', '').strip()
 
-        if not firstName or not lastName or not email:
+        if not firstName or not lastName or not email or not team:
             return jsonify({"error": "Eksik alan var"}), 400 #İstemci (kullanıcı) hatalı veya eksik veri göndermiştir.
         if not firstName.isalpha() or not lastName.isalpha():
             return jsonify({"error": "Ad ve soyad sadece harf içermelidir."}), 400
@@ -57,7 +61,9 @@ def create_user():
         email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w{2,4}$'
         if not re.match(email_pattern, email):
             return jsonify({"error": "Geçerli bir e-posta adresi girin."}), 400
-
+        if team not in ALLOWED_TEAMS:
+            return jsonify({"error": "Lütfen bir takım seçiniz."}), 400
+        
         db = get_db_connection()
         with db.cursor() as cursor:
             cursor.execute("SELECT COUNT(*) FROM users WHERE email = %s", (email,))
@@ -65,7 +71,7 @@ def create_user():
             if result and list(result.values())[0] > 0:
                 db.close()
                 return jsonify({"error": "Bu email zaten kayıtlı!"}), 409 #çakışma var.
-            cursor.execute("INSERT INTO users (firstName, lastName, email, created_at) VALUES(%s, %s, %s, NOW())",
+            cursor.execute("INSERT INTO users (firstName, lastName, email, team, created_at) VALUES(%s, %s, %s, %s, NOW())",
                            (firstName, lastName, email))
             db.commit()
         db.close()
@@ -82,9 +88,12 @@ def update_user(id):
         firstName = data.get("firstName", "").strip()
         lastName = data.get("lastName", "").strip()
         email = data.get("email", "").strip()
+        team = data.get('team', '').strip()
 
-        if not firstName or not lastName or not email:
+        if not firstName or not lastName or not email or not team:
             return jsonify({"error": "Eksik alan var"}), 400
+        if team not in ALLOWED_TEAMS:
+            return jsonify({"error": "Lütfen bir takım seçin."}), 400
         if not firstName.isalpha() or not lastName.isalpha():
             return jsonify({"error": "Ad ve soyad sadece harf içermelidir."}), 400
         if len(firstName) < 2 or len(lastName) < 2:
@@ -97,9 +106,9 @@ def update_user(id):
         with db.cursor() as cursor:
             cursor.execute("""
                 UPDATE users
-                SET firstName=%s, lastName=%s, email=%s, created_at=NOW()
+                SET firstName=%s, lastName=%s, email=%s, team=%s, created_at=NOW()
                 WHERE id=%s
-            """, (firstName, lastName, email, id))
+            """, (firstName, lastName, email, team, id))
             db.commit()
         db.close()
         return jsonify({"message": "Kullanıcı güncellendi."}), 200 #istek başarıyla tamamlandı.
@@ -120,4 +129,25 @@ def delete_user(id):
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+@user_routes.route('/alter-table', methods=['GET'])
+def add_team_column():
+    try:
+        db = get_db_connection()
+        with db.cursor() as cursor:
+            # Önce sütun var mı kontrol et
+            cursor.execute("SHOW COLUMNS FROM users LIKE 'team'")
+            result = cursor.fetchone()
+            if not result:
+                cursor.execute("ALTER TABLE users ADD COLUMN team VARCHAR(100)")
+                db.commit()
+                message = "team sütunu eklendi."
+            else:
+                message = "team sütunu zaten mevcut."
+        db.close()
+        return jsonify({"message": message})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
 

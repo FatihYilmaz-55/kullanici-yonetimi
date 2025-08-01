@@ -26,7 +26,7 @@ body {
 }
 #userTable th,
 #userTable td {
-  padding: 3px 15px;
+  padding: 8px 15px;
   text-align: left;
   font-size: 15px;
 }
@@ -114,6 +114,18 @@ td.action-cell {
   pointer-events: none;
   transition: opacity 0.5s ease;
   z-index: 9999;
+}
+#kullaniciGiris select{
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  appearance: none; /* Düz görünüme yakın */
+  background-color: white;
+  cursor: pointer;
 }
 #toast.error{
   background-color: #f8d7da;

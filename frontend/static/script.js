@@ -102,6 +102,7 @@ userTableBody.querySelectorAll(".editBtn").forEach(button => {
     form.firstName.value = user.firstName;
     form.lastName.value = user.lastName;
     form.email.value = user.email;
+    form.team.value = user.team;
 
     form.dataset.editingUserId = userId;
 
@@ -168,6 +169,8 @@ e.preventDefault();
 const firstName = form.firstName.value.trim();
 const lastName = form.lastName.value.trim();
 const email = form.email.value.trim();
+const team = form.team.value.trim();
+
 const data = { firstName, lastName, email};
 
 
