@@ -123,7 +123,7 @@ td.action-cell {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 3px;
-  appearance: none; /* Düz görünüme yakın */
+  appearance: none;
   background-color: white;
   cursor: pointer;
 }
