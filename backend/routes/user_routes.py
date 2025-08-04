@@ -3,7 +3,7 @@ from db.mysql_connection import get_db_connection
 import traceback
 import re
 
-ALLOWED_TEAMS = ['Galatasaray', 'Fenerbahçe', 'Beşiktaş', 'SAMSUNSPOR', 'trabzonspor']
+ALLOWED_TEAMS = ['Galatasaray', 'Fenerbahçe', 'Beşiktaş', 'SAMSUNSPOR', 'Trabzonspor']
 
 #uygulamandaki yönlendirme (routing) ve işlevlerin gruplanmasını sağlar.
 user_routes = Blueprint("user_routes", __name__)
