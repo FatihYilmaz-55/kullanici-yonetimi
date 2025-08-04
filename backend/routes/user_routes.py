@@ -28,7 +28,7 @@ def create_users_table_if_not_exists():
         return jsonify({"message": "Tablo oluşturuldu."})
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 #Sunucu tarafında bir hata olduğunu belirtir.
 
 
 @user_routes.route('/users', methods=['GET'])
@@ -41,7 +41,7 @@ def get_users():
         db.close()
         return jsonify(users), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500 #Sunucu tarafında bir hata olduğunu belirtir.
+        return jsonify({"error": str(e)}), 500 
 
 @user_routes.route('/users', methods=['POST'])
 def create_user():
